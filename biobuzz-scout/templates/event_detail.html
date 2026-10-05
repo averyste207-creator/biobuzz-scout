@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% block title %}{{ event.name }} · BIOBUZZ Scout{% endblock %}
+{% block content %}
+<div class="mb-8">
+  <a href="/events" class="text-leaf-200 hover:text-white text-sm mb-2 inline-block">← All Events</a>
+  <h1 class="text-3xl font-bold text-white">{{ event.name }}</h1>
+  <p class="text-leaf-200">
+    {% if event.location %}{{ event.location }} · {% endif %}{{ event.date or 'Date TBD' }}
+  </p>
+</div>
+
+<div class="card p-6 mb-8">
+  <h2 class="text-lg font-bold text-gray-900 mb-4">Add Match</h2>
+  <form action="/events/{{ event.id }}/matches/add" method="post" class="space-y-4">
+    <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+      <div>
+        <label class="label">Match # *</label>
+        <input type="number" name="match_number" required class="input" placeholder="1" />
+      </div>
+      <div>
+        <label class="label">Type</label>
+        <select name="match_type" class="input">
+          <option value="Qual">Qual</option>
+          <option value="Practice">Practice</option>
+          <option value="Elim">Elim</option>
+        </select>
+      </div>
+    </div>
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+      <div>
+        <label class="label text-red-600">Red 1 *</label>
+        <input type="number" name="red1" required class="input border-red-200" placeholder="12345" />
+      </div>
+      <div>
+        <label class="label text-red-600">Red 2 *</label>
+        <input type="number" name="red2" required class="input border-red-200" placeholder="23456" />
+      </div>
+      <div>
+        <label class="label text-blue-600">Blue 1 *</label>
+        <input type="number" name="blue1" required class="input border-blue-200" placeholder="34567" />
+      </div>
+      <div>
+        <label class="label text-blue-600">Blue 2 *</label>
+        <input type="number" name="blue2" required class="input border-blue-200" placeholder="45678" />
+      </div>
+    </div>
+    <button type="submit" class="btn-primary">Add Match</button>
+  </form>
+</div>
+
+<div class="card overflow-hidden">
+  <div class="overflow-x-auto">
+    <table class="w-full text-left">
+      <thead class="bg-gray-50 border-b">
+        <tr>
+          <th class="px-4 py-3 text-sm font-semibold text-gray-600">Match</th>
+          <th class="px-4 py-3 text-sm font-semibold text-gray-600">Type</th>
+          <th class="px-4 py-3 text-sm font-semibold text-red-600">Red Alliance</th>
+          <th class="px-4 py-3 text-sm font-semibold text-blue-600">Blue Alliance</th>
+          <th class="px-4 py-3 text-sm font-semibold text-gray-600">Scout</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-50">
+        {% for m in matches %}
+        <tr class="hover:bg-leaf-50/40">
+          <td class="px-4 py-3 font-bold">{{ m.match_number }}</td>
+          <td class="px-4 py-3 text-gray-600">{{ m.match_type }}</td>
+          <td class="px-4 py-3">
+            <span class="font-medium text-red-700">{{ m.red1 }}</span> ·
+            <span class="font-medium text-red-700">{{ m.red2 }}</span>
+          </td>
+          <td class="px-4 py-3">
+            <span class="font-medium text-blue-700">{{ m.blue1 }}</span> ·
+            <span class="font-medium text-blue-700">{{ m.blue2 }}</span>
+          </td>
+          <td class="px-4 py-3 space-x-2">
+            <a href="/scout?match_id={{ m.id }}&team_number={{ m.red1 }}" class="text-xs text-red-600 hover:underline">R1</a>
+            <a href="/scout?match_id={{ m.id }}&team_number={{ m.red2 }}" class="text-xs text-red-600 hover:underline">R2</a>
+            <a href="/scout?match_id={{ m.id }}&team_number={{ m.blue1 }}" class="text-xs text-blue-600 hover:underline">B1</a>
+            <a href="/scout?match_id={{ m.id }}&team_number={{ m.blue2 }}" class="text-xs text-blue-600 hover:underline">B2</a>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="5" class="px-4 py-8 text-center text-gray-400">No matches yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

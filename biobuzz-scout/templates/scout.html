@@ -1,0 +1,169 @@
+{% extends "base.html" %}
+{% block title %}Scout Entry · BIOBUZZ Scout{% endblock %}
+{% block content %}
+<div class="mb-8">
+  <h1 class="text-3xl font-bold text-white">New Scout Entry</h1>
+  <p class="text-leaf-200">Record BIOBUZZ match performance for one robot.</p>
+</div>
+
+<form action="/scout/submit" method="post" class="space-y-6">
+  <!-- Match & Team -->
+  <div class="card p-6">
+    <h2 class="text-lg font-bold text-gray-900 mb-4">Match & Team</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div>
+        <label class="label">Match *</label>
+        <select name="match_id" required class="input">
+          <option value="">Select match…</option>
+          {% for m in matches %}
+          <option value="{{ m.id }}" {% if selected_match and selected_match.id == m.id %}selected{% endif %}>
+            {{ m.event.name if m.event else 'Event' }} · M{{ m.match_number }} ({{ m.match_type }})
+            — R:{{ m.red1 }}/{{ m.red2 }} B:{{ m.blue1 }}/{{ m.blue2 }}
+          </option>
+          {% endfor %}
+        </select>
+      </div>
+      <div>
+        <label class="label">Team Number *</label>
+        <input type="number" name="team_number" required class="input"
+               value="{{ prefill_team or '' }}" placeholder="12345" />
+      </div>
+      <div>
+        <label class="label">Alliance *</label>
+        <select name="alliance" required class="input">
+          <option value="red">Red</option>
+          <option value="blue">Blue</option>
+        </select>
+      </div>
+      <div>
+        <label class="label">Scout Name</label>
+        <input type="text" name="scout_name" class="input" placeholder="Your name" />
+      </div>
+    </div>
+  </div>
+
+  <!-- Autonomous -->
+  <div class="card p-6 border-l-4 border-leaf-500">
+    <h2 class="text-lg font-bold text-gray-900 mb-1 flex items-center gap-2">
+      <span class="text-leaf-600">⚡</span> Autonomous (30s)
+    </h2>
+    <p class="text-sm text-gray-500 mb-4">Leave · Park · Hive Tips · Elements</p>
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+      <label class="flex items-center gap-2 cursor-pointer bg-gray-50 rounded-xl p-3">
+        <input type="checkbox" name="auto_leave" value="1" class="w-5 h-5 rounded text-leaf-600" />
+        <span class="font-medium">Auto Leave (+3)</span>
+      </label>
+      <label class="flex items-center gap-2 cursor-pointer bg-gray-50 rounded-xl p-3">
+        <input type="checkbox" name="auto_park" value="1" class="w-5 h-5 rounded text-leaf-600" />
+        <span class="font-medium">Auto Park (+5)</span>
+      </label>
+      <div>
+        <label class="label">Hive Tips</label>
+        <input type="number" name="auto_hive_tips" min="0" value="0" class="input" />
+      </div>
+      <div>
+        <label class="label">Pollen scored</label>
+        <input type="number" name="auto_pollen" min="0" value="0" class="input" />
+      </div>
+      <div>
+        <label class="label">Nectar scored</label>
+        <input type="number" name="auto_nectar" min="0" value="0" class="input" />
+      </div>
+    </div>
+  </div>
+
+  <!-- Teleop -->
+  <div class="card p-6 border-l-4 border-hive-500">
+    <h2 class="text-lg font-bold text-gray-900 mb-1 flex items-center gap-2">
+      <span class="text-hive-600">🍯</span> Teleop (2 min)
+    </h2>
+    <p class="text-sm text-gray-500 mb-4">Hive Tips · Flowers · Garden · Park</p>
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+      <div>
+        <label class="label">Hive Tips</label>
+        <input type="number" name="tele_hive_tips" min="0" value="0" class="input" />
+      </div>
+      <div>
+        <label class="label">Pollen (approx)</label>
+        <input type="number" name="tele_pollen" min="0" value="0" class="input" />
+      </div>
+      <div>
+        <label class="label">Nectar (approx)</label>
+        <input type="number" name="tele_nectar" min="0" value="0" class="input" />
+      </div>
+      <div>
+        <label class="label">Flowers Owned</label>
+        <input type="number" name="flower_owned" min="0" value="0" class="input" />
+      </div>
+      <div>
+        <label class="label">Bottom Nectar Bonuses</label>
+        <input type="number" name="bottom_nectar_bonus" min="0" value="0" class="input" />
+      </div>
+      <div>
+        <label class="label">Garden Elements</label>
+        <input type="number" name="garden_scored" min="0" value="0" class="input" />
+      </div>
+      <label class="flex items-center gap-2 cursor-pointer bg-gray-50 rounded-xl p-3 col-span-2 sm:col-span-1">
+        <input type="checkbox" name="tele_park" value="1" class="w-5 h-5 rounded text-leaf-600" />
+        <span class="font-medium">Teleop Park (+5)</span>
+      </label>
+    </div>
+  </div>
+
+  <!-- Reliability -->
+  <div class="card p-6 border-l-4 border-red-400">
+    <h2 class="text-lg font-bold text-gray-900 mb-1 flex items-center gap-2">
+      <span>💀</span> Robot Reliability
+    </h2>
+    <p class="text-sm text-gray-500 mb-4">Track “deaths” / disabilities during the match.</p>
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div>
+        <label class="label">Robot Deaths / Disables</label>
+        <input type="number" name="robot_deaths" min="0" value="0" class="input" />
+      </div>
+      <div>
+        <label class="label">Disabled Time (sec)</label>
+        <input type="number" name="disabled_time_sec" min="0" value="0" class="input" />
+      </div>
+      <div>
+        <label class="label">Death / Failure Reasons</label>
+        <input type="text" name="death_reasons" class="input" placeholder="battery, code crash, motor…" />
+      </div>
+    </div>
+  </div>
+
+  <!-- Qualitative -->
+  <div class="card p-6">
+    <h2 class="text-lg font-bold text-gray-900 mb-4">Qualitative Ratings (1–5)</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+      <div>
+        <label class="label">Driver Skill</label>
+        <input type="range" name="driver_skill" min="1" max="5" value="3" class="w-full accent-leaf-600"
+               oninput="this.nextElementSibling.textContent=this.value" />
+        <span class="text-sm font-medium text-gray-700">3</span>
+      </div>
+      <div>
+        <label class="label">Consistency</label>
+        <input type="range" name="consistency" min="1" max="5" value="3" class="w-full accent-leaf-600"
+               oninput="this.nextElementSibling.textContent=this.value" />
+        <span class="text-sm font-medium text-gray-700">3</span>
+      </div>
+      <div>
+        <label class="label">Intake Reliability</label>
+        <input type="range" name="intake_reliability" min="1" max="5" value="3" class="w-full accent-leaf-600"
+               oninput="this.nextElementSibling.textContent=this.value" />
+        <span class="text-sm font-medium text-gray-700">3</span>
+      </div>
+    </div>
+    <div class="mt-4">
+      <label class="label">Notes</label>
+      <textarea name="notes" rows="3" class="input" placeholder="Strategy notes, defense, unique mechanisms…"></textarea>
+    </div>
+  </div>
+
+  <div class="flex gap-3">
+    <button type="submit" class="btn-primary text-lg px-8">Submit Scout Entry</button>
+    <a href="/" class="btn-secondary">Cancel</a>
+  </div>
+</form>
+{% endblock %}

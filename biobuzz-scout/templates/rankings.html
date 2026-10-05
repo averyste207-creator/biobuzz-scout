@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}Rankings · BIOBUZZ Scout{% endblock %}
+{% block content %}
+<div class="mb-8">
+  <h1 class="text-3xl font-bold text-white">Team Rankings</h1>
+  <p class="text-leaf-200">Sorted by average estimated contribution, then reliability.</p>
+</div>
+
+<div class="card overflow-hidden">
+  <div class="overflow-x-auto">
+    <table class="w-full text-left">
+      <thead class="bg-gray-50 border-b">
+        <tr>
+          <th class="px-4 py-3 text-sm font-semibold text-gray-600">Rank</th>
+          <th class="px-4 py-3 text-sm font-semibold text-gray-600">Team</th>
+          <th class="px-4 py-3 text-sm font-semibold text-gray-600">Matches</th>
+          <th class="px-4 py-3 text-sm font-semibold text-gray-600">Avg Tips</th>
+          <th class="px-4 py-3 text-sm font-semibold text-gray-600">Avg Pts</th>
+          <th class="px-4 py-3 text-sm font-semibold text-gray-600">Death %</th>
+          <th class="px-4 py-3 text-sm font-semibold text-gray-600">Driver</th>
+          <th class="px-4 py-3 text-sm font-semibold text-gray-600">Consistency</th>
+          <th class="px-4 py-3 text-sm font-semibold text-gray-600">Park %</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-50">
+        {% for item in ranked %}
+        {% set s = item.stats %}
+        {% set t = item.team %}
+        <tr class="hover:bg-leaf-50/50 {% if loop.index <= 3 %}bg-hive-50/30{% endif %}">
+          <td class="px-4 py-3">
+            {% if loop.index == 1 %}🥇
+            {% elif loop.index == 2 %}🥈
+            {% elif loop.index == 3 %}🥉
+            {% else %}<span class="text-gray-500">{{ loop.index }}</span>{% endif %}
+          </td>
+          <td class="px-4 py-3">
+            <a href="/teams/{{ t.id }}" class="font-bold text-leaf-700 hover:underline">{{ t.number }}</a>
+            {% if t.name %}<span class="text-gray-400 text-sm ml-1">{{ t.name }}</span>{% endif %}
+          </td>
+          <td class="px-4 py-3">{{ s.matches }}</td>
+          <td class="px-4 py-3"><span class="stat-pill bg-hive-100 text-hive-800">{{ s.avg_hive_tips }}</span></td>
+          <td class="px-4 py-3 font-semibold">{{ s.avg_points }}</td>
+          <td class="px-4 py-3">
+            <span class="stat-pill {% if s.death_rate > 30 %}bg-red-100 text-red-700{% elif s.death_rate > 10 %}bg-orange-100 text-orange-700{% else %}bg-green-100 text-green-700{% endif %}">
+              {{ s.death_rate }}%
+            </span>
+          </td>
+          <td class="px-4 py-3">{{ s.avg_driver }}</td>
+          <td class="px-4 py-3">{{ s.avg_consistency }}</td>
+          <td class="px-4 py-3">{{ s.park_rate }}%</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="9" class="px-4 py-10 text-center text-gray-400">No data yet. Scout some matches!</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

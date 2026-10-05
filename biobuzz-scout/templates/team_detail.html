@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% block title %}Team {{ team.number }} · BIOBUZZ Scout{% endblock %}
+{% block content %}
+<div class="mb-8">
+  <a href="/teams" class="text-leaf-200 hover:text-white text-sm mb-2 inline-block">← All Teams</a>
+  <h1 class="text-3xl font-bold text-white">Team {{ team.number }}</h1>
+  {% if team.name %}<p class="text-hive-300 text-lg">{{ team.name }}</p>{% endif %}
+  {% if team.notes %}<p class="text-leaf-200 mt-1">{{ team.notes }}</p>{% endif %}
+</div>
+
+{% if stats %}
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+  <div class="card p-4 text-center">
+    <p class="text-2xl font-bold text-gray-900">{{ stats.matches }}</p>
+    <p class="text-xs text-gray-500">Matches</p>
+  </div>
+  <div class="card p-4 text-center">
+    <p class="text-2xl font-bold text-hive-600">{{ stats.avg_hive_tips }}</p>
+    <p class="text-xs text-gray-500">Avg Hive Tips</p>
+  </div>
+  <div class="card p-4 text-center">
+    <p class="text-2xl font-bold text-leaf-600">{{ stats.avg_points }}</p>
+    <p class="text-xs text-gray-500">Avg Est. Points</p>
+  </div>
+  <div class="card p-4 text-center">
+    <p class="text-2xl font-bold {% if stats.death_rate > 30 %}text-red-600{% else %}text-gray-900{% endif %}">{{ stats.death_rate }}%</p>
+    <p class="text-xs text-gray-500">Death Rate</p>
+  </div>
+  <div class="card p-4 text-center">
+    <p class="text-2xl font-bold text-gray-900">{{ stats.leave_rate }}%</p>
+    <p class="text-xs text-gray-500">Auto Leave</p>
+  </div>
+  <div class="card p-4 text-center">
+    <p class="text-2xl font-bold text-gray-900">{{ stats.park_rate }}%</p>
+    <p class="text-xs text-gray-500">Park Rate</p>
+  </div>
+  <div class="card p-4 text-center">
+    <p class="text-2xl font-bold text-gray-900">{{ stats.avg_driver }}/5</p>
+    <p class="text-xs text-gray-500">Driver Skill</p>
+  </div>
+  <div class="card p-4 text-center">
+    <p class="text-2xl font-bold text-gray-900">{{ stats.avg_consistency }}/5</p>
+    <p class="text-xs text-gray-500">Consistency</p>
+  </div>
+</div>
+{% endif %}
+
+<div class="flex justify-between items-center mb-4">
+  <h2 class="text-xl font-bold text-white">Scout Entries</h2>
+  <a href="/scout?team_number={{ team.number }}" class="btn-primary text-sm">+ Scout this team</a>
+</div>
+
+<div class="card overflow-hidden">
+  <div class="overflow-x-auto">
+    <table class="w-full text-left text-sm">
+      <thead class="bg-gray-50 border-b">
+        <tr>
+          <th class="px-4 py-3 font-semibold text-gray-600">Match</th>
+          <th class="px-4 py-3 font-semibold text-gray-600">Alliance</th>
+          <th class="px-4 py-3 font-semibold text-gray-600">Tips</th>
+          <th class="px-4 py-3 font-semibold text-gray-600">Leave/Park</th>
+          <th class="px-4 py-3 font-semibold text-gray-600">Deaths</th>
+          <th class="px-4 py-3 font-semibold text-gray-600">Est. Pts</th>
+          <th class="px-4 py-3 font-semibold text-gray-600">Scout</th>
+          <th class="px-4 py-3"></th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-50">
+        {% for e in entries %}
+        <tr class="hover:bg-leaf-50/40">
+          <td class="px-4 py-3">M{{ e.match.match_number if e.match else '?' }}</td>
+          <td class="px-4 py-3">
+            <span class="stat-pill {% if e.alliance == 'red' %}bg-red-100 text-red-700{% else %}bg-blue-100 text-blue-700{% endif %}">
+              {{ e.alliance|upper }}
+            </span>
+          </td>
+          <td class="px-4 py-3 font-medium">{{ e.auto_hive_tips + e.tele_hive_tips }}</td>
+          <td class="px-4 py-3">
+            {% if e.auto_leave %}L{% endif %}{% if e.auto_park or e.tele_park %}P{% endif %}
+            {% if not e.auto_leave and not e.auto_park and not e.tele_park %}—{% endif %}
+          </td>
+          <td class="px-4 py-3">
+            {% if e.robot_deaths > 0 %}
+              <span class="text-red-600 font-medium">💀 {{ e.robot_deaths }}</span>
+            {% else %}
+              <span class="text-green-600">✓</span>
+            {% endif %}
+          </td>
+          <td class="px-4 py-3">{{ e.estimated_points }}</td>
+          <td class="px-4 py-3 text-gray-500">{{ e.scout_name or '—' }}</td>
+          <td class="px-4 py-3">
+            <a href="/entries/{{ e.id }}" class="text-leaf-600 hover:underline">Details</a>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="8" class="px-4 py-8 text-center text-gray-400">No scout entries yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

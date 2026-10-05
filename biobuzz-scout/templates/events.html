@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}Events · BIOBUZZ Scout{% endblock %}
+{% block content %}
+<div class="mb-8">
+  <h1 class="text-3xl font-bold text-white">Events</h1>
+  <p class="text-leaf-200">Create events and build match schedules.</p>
+</div>
+
+<div class="card p-6 mb-8">
+  <h2 class="text-lg font-bold text-gray-900 mb-4">New Event</h2>
+  <form action="/events/add" method="post" class="grid grid-cols-1 sm:grid-cols-4 gap-4">
+    <div>
+      <label class="label">Event Name *</label>
+      <input type="text" name="name" required class="input" placeholder="Qualifier #1" />
+    </div>
+    <div>
+      <label class="label">Location</label>
+      <input type="text" name="location" class="input" placeholder="City / Venue" />
+    </div>
+    <div>
+      <label class="label">Date</label>
+      <input type="text" name="date" class="input" placeholder="2026-12-05" />
+    </div>
+    <div class="flex items-end">
+      <button type="submit" class="btn-primary w-full">Create Event</button>
+    </div>
+  </form>
+</div>
+
+<div class="grid gap-4">
+  {% for event in events %}
+  <a href="/events/{{ event.id }}" class="card p-5 hover:shadow-md transition flex items-center justify-between group">
+    <div>
+      <h3 class="font-bold text-gray-900 group-hover:text-leaf-700 text-lg">{{ event.name }}</h3>
+      <p class="text-sm text-gray-500">
+        {% if event.location %}{{ event.location }} · {% endif %}
+        {{ event.date or 'Date TBD' }} ·
+        {{ event.matches|length }} matches
+      </p>
+    </div>
+    <span class="text-leaf-600 font-medium">Open →</span>
+  </a>
+  {% else %}
+  <div class="card p-8 text-center text-gray-400">No events yet. Create one above.</div>
+  {% endfor %}
+</div>
+{% endblock %}

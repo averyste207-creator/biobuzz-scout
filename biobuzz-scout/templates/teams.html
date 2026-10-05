@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block title %}Teams · BIOBUZZ Scout{% endblock %}
+{% block content %}
+<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+  <div>
+    <h1 class="text-3xl font-bold text-white">Teams</h1>
+    <p class="text-leaf-200">All tracked robots and their performance snapshots.</p>
+  </div>
+</div>
+
+<div class="card p-6 mb-8">
+  <h2 class="text-lg font-bold text-gray-900 mb-4">Add / Update Team</h2>
+  <form action="/teams/add" method="post" class="grid grid-cols-1 sm:grid-cols-4 gap-4">
+    <div>
+      <label class="label">Team Number *</label>
+      <input type="number" name="number" required class="input" placeholder="12345" />
+    </div>
+    <div>
+      <label class="label">Name</label>
+      <input type="text" name="name" class="input" placeholder="Team Name" />
+    </div>
+    <div>
+      <label class="label">Notes</label>
+      <input type="text" name="notes" class="input" placeholder="Optional notes" />
+    </div>
+    <div class="flex items-end">
+      <button type="submit" class="btn-primary w-full">Save Team</button>
+    </div>
+  </form>
+</div>
+
+<div class="card overflow-hidden">
+  <div class="overflow-x-auto">
+    <table class="w-full text-left">
+      <thead class="bg-gray-50 border-b border-gray-100">
+        <tr>
+          <th class="px-4 py-3 text-sm font-semibold text-gray-600">#</th>
+          <th class="px-4 py-3 text-sm font-semibold text-gray-600">Name</th>
+          <th class="px-4 py-3 text-sm font-semibold text-gray-600">Matches</th>
+          <th class="px-4 py-3 text-sm font-semibold text-gray-600">Avg Tips</th>
+          <th class="px-4 py-3 text-sm font-semibold text-gray-600">Avg Pts</th>
+          <th class="px-4 py-3 text-sm font-semibold text-gray-600">Death Rate</th>
+          <th class="px-4 py-3 text-sm font-semibold text-gray-600">Driver</th>
+          <th class="px-4 py-3 text-sm font-semibold text-gray-600"></th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-50">
+        {% for t in teams %}
+        {% set s = stats_map.get(t.id) %}
+        <tr class="hover:bg-leaf-50/50 transition">
+          <td class="px-4 py-3 font-bold text-gray-900">{{ t.number }}</td>
+          <td class="px-4 py-3 text-gray-700">{{ t.name or '—' }}</td>
+          <td class="px-4 py-3 text-gray-600">{{ s.matches if s else 0 }}</td>
+          <td class="px-4 py-3">
+            {% if s %}<span class="stat-pill bg-hive-100 text-hive-800">{{ s.avg_hive_tips }}</span>{% else %}—{% endif %}
+          </td>
+          <td class="px-4 py-3 font-medium">{{ s.avg_points if s else '—' }}</td>
+          <td class="px-4 py-3">
+            {% if s %}
+              <span class="stat-pill {% if s.death_rate > 30 %}bg-red-100 text-red-700{% elif s.death_rate > 10 %}bg-orange-100 text-orange-700{% else %}bg-green-100 text-green-700{% endif %}">
+                {{ s.death_rate }}%
+              </span>
+            {% else %}—{% endif %}
+          </td>
+          <td class="px-4 py-3">{{ s.avg_driver if s else '—' }}</td>
+          <td class="px-4 py-3">
+            <a href="/teams/{{ t.id }}" class="text-leaf-600 hover:underline text-sm font-medium">View →</a>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="8" class="px-4 py-8 text-center text-gray-400">No teams yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

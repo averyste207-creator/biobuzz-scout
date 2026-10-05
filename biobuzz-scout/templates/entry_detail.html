@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}Entry #{{ entry.id }} · BIOBUZZ Scout{% endblock %}
+{% block content %}
+<div class="mb-8">
+  <a href="/teams/{{ entry.team.id }}" class="text-leaf-200 hover:text-white text-sm mb-2 inline-block">← Team {{ entry.team.number }}</a>
+  <h1 class="text-3xl font-bold text-white">Scout Entry #{{ entry.id }}</h1>
+  <p class="text-leaf-200">
+    Team {{ entry.team.number }} · Match {{ entry.match.match_number if entry.match else '?' }} ·
+    <span class="{% if entry.alliance == 'red' %}text-red-300{% else %}text-blue-300{% endif %}">{{ entry.alliance|upper }}</span>
+  </p>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+  <div class="card p-6">
+    <h2 class="font-bold text-gray-900 mb-4">⚡ Autonomous</h2>
+    <dl class="space-y-2 text-sm">
+      <div class="flex justify-between"><dt class="text-gray-500">Leave</dt><dd class="font-medium">{{ 'Yes' if entry.auto_leave else 'No' }}</dd></div>
+      <div class="flex justify-between"><dt class="text-gray-500">Park</dt><dd class="font-medium">{{ 'Yes' if entry.auto_park else 'No' }}</dd></div>
+      <div class="flex justify-between"><dt class="text-gray-500">Hive Tips</dt><dd class="font-medium">{{ entry.auto_hive_tips }}</dd></div>
+      <div class="flex justify-between"><dt class="text-gray-500">Pollen</dt><dd class="font-medium">{{ entry.auto_pollen }}</dd></div>
+      <div class="flex justify-between"><dt class="text-gray-500">Nectar</dt><dd class="font-medium">{{ entry.auto_nectar }}</dd></div>
+    </dl>
+  </div>
+
+  <div class="card p-6">
+    <h2 class="font-bold text-gray-900 mb-4">🍯 Teleop</h2>
+    <dl class="space-y-2 text-sm">
+      <div class="flex justify-between"><dt class="text-gray-500">Hive Tips</dt><dd class="font-medium">{{ entry.tele_hive_tips }}</dd></div>
+      <div class="flex justify-between"><dt class="text-gray-500">Pollen (approx)</dt><dd class="font-medium">{{ entry.tele_pollen }}</dd></div>
+      <div class="flex justify-between"><dt class="text-gray-500">Nectar (approx)</dt><dd class="font-medium">{{ entry.tele_nectar }}</dd></div>
+      <div class="flex justify-between"><dt class="text-gray-500">Flowers Owned</dt><dd class="font-medium">{{ entry.flower_owned }}</dd></div>
+      <div class="flex justify-between"><dt class="text-gray-500">Bottom Nectar Bonus</dt><dd class="font-medium">{{ entry.bottom_nectar_bonus }}</dd></div>
+      <div class="flex justify-between"><dt class="text-gray-500">Garden</dt><dd class="font-medium">{{ entry.garden_scored }}</dd></div>
+      <div class="flex justify-between"><dt class="text-gray-500">Park</dt><dd class="font-medium">{{ 'Yes' if entry.tele_park else 'No' }}</dd></div>
+    </dl>
+  </div>
+
+  <div class="card p-6">
+    <h2 class="font-bold text-gray-900 mb-4">💀 Reliability</h2>
+    <dl class="space-y-2 text-sm">
+      <div class="flex justify-between"><dt class="text-gray-500">Deaths</dt><dd class="font-medium {% if entry.robot_deaths %}text-red-600{% endif %}">{{ entry.robot_deaths }}</dd></div>
+      <div class="flex justify-between"><dt class="text-gray-500">Disabled Time</dt><dd class="font-medium">{{ entry.disabled_time_sec }}s</dd></div>
+      <div class="flex justify-between"><dt class="text-gray-500">Reasons</dt><dd class="font-medium">{{ entry.death_reasons or '—' }}</dd></div>
+    </dl>
+  </div>
+
+  <div class="card p-6">
+    <h2 class="font-bold text-gray-900 mb-4">⭐ Qualitative</h2>
+    <dl class="space-y-2 text-sm">
+      <div class="flex justify-between"><dt class="text-gray-500">Driver Skill</dt><dd class="font-medium">{{ entry.driver_skill }}/5</dd></div>
+      <div class="flex justify-between"><dt class="text-gray-500">Consistency</dt><dd class="font-medium">{{ entry.consistency }}/5</dd></div>
+      <div class="flex justify-between"><dt class="text-gray-500">Intake Reliability</dt><dd class="font-medium">{{ entry.intake_reliability }}/5</dd></div>
+      <div class="flex justify-between"><dt class="text-gray-500">Est. Points</dt><dd class="font-bold text-leaf-700">{{ entry.estimated_points }}</dd></div>
+      <div class="flex justify-between"><dt class="text-gray-500">Scout</dt><dd class="font-medium">{{ entry.scout_name or '—' }}</dd></div>
+    </dl>
+    {% if entry.notes %}
+    <div class="mt-4 pt-4 border-t">
+      <p class="text-sm text-gray-500 mb-1">Notes</p>
+      <p class="text-gray-800">{{ entry.notes }}</p>
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+<form action="/entries/{{ entry.id }}/delete" method="post" class="mt-8" onsubmit="return confirm('Delete this entry?')">
+  <button type="submit" class="btn-danger">Delete Entry</button>
+</form>
+{% endblock %}

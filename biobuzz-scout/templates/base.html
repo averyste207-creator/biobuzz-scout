@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}BIOBUZZ Scout{% endblock %}</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            hive: {
+              50:  '#fefce8',
+              100: '#fef9c3',
+              200: '#fef08a',
+              300: '#fde047',
+              400: '#facc15',
+              500: '#eab308',
+              600: '#ca8a04',
+              700: '#a16207',
+              800: '#854d0e',
+              900: '#713f12',
+            },
+            nectar: {
+              500: '#f97316',
+              600: '#ea580c',
+            },
+            pollen: {
+              400: '#facc15',
+              500: '#eab308',
+            },
+            leaf: {
+              500: '#22c55e',
+              600: '#16a34a',
+              700: '#15803d',
+              800: '#166534',
+              900: '#14532d',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+    .card { @apply bg-white rounded-2xl shadow-sm border border-gray-100; }
+    .btn-primary { @apply bg-leaf-600 hover:bg-leaf-700 text-white font-semibold py-2.5 px-5 rounded-xl transition shadow-sm; }
+    .btn-secondary { @apply bg-hive-100 hover:bg-hive-200 text-hive-900 font-semibold py-2.5 px-5 rounded-xl transition; }
+    .btn-danger { @apply bg-red-100 hover:bg-red-200 text-red-800 font-medium py-1.5 px-3 rounded-lg text-sm; }
+    .input { @apply w-full border border-gray-200 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-leaf-500 focus:border-leaf-500 outline-none transition; }
+    .label { @apply block text-sm font-medium text-gray-700 mb-1; }
+    .stat-pill { @apply inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium; }
+  </style>
+  {% block head %}{% endblock %}
+</head>
+<body class="h-full bg-gradient-to-br from-leaf-900 via-leaf-800 to-hive-900 min-h-screen">
+  <!-- Nav -->
+  <nav class="bg-leaf-900/80 backdrop-blur-md border-b border-leaf-700/50 sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        <a href="/" class="flex items-center gap-2 group">
+          <span class="text-3xl">🐝</span>
+          <div>
+            <span class="text-white font-bold text-lg tracking-tight group-hover:text-hive-300 transition">BIOBUZZ</span>
+            <span class="text-hive-300 text-xs block -mt-1">Scout · 2026-27</span>
+          </div>
+        </a>
+        <div class="hidden md:flex items-center gap-1">
+          <a href="/" class="text-leaf-100 hover:text-white hover:bg-leaf-700/50 px-3 py-2 rounded-lg text-sm font-medium transition">Dashboard</a>
+          <a href="/scout" class="text-leaf-100 hover:text-white hover:bg-leaf-700/50 px-3 py-2 rounded-lg text-sm font-medium transition">Scout</a>
+          <a href="/teams" class="text-leaf-100 hover:text-white hover:bg-leaf-700/50 px-3 py-2 rounded-lg text-sm font-medium transition">Teams</a>
+          <a href="/events" class="text-leaf-100 hover:text-white hover:bg-leaf-700/50 px-3 py-2 rounded-lg text-sm font-medium transition">Events</a>
+          <a href="/rankings" class="text-leaf-100 hover:text-white hover:bg-leaf-700/50 px-3 py-2 rounded-lg text-sm font-medium transition">Rankings</a>
+          <a href="/export/csv" class="ml-2 btn-secondary text-sm py-1.5 px-3">Export CSV</a>
+        </div>
+        <!-- Mobile menu button -->
+        <button id="mobile-menu-btn" class="md:hidden text-white p-2">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+      </div>
+      <div id="mobile-menu" class="hidden md:hidden pb-3 space-y-1">
+        <a href="/" class="block text-leaf-100 hover:bg-leaf-700/50 px-3 py-2 rounded-lg text-sm">Dashboard</a>
+        <a href="/scout" class="block text-leaf-100 hover:bg-leaf-700/50 px-3 py-2 rounded-lg text-sm">Scout</a>
+        <a href="/teams" class="block text-leaf-100 hover:bg-leaf-700/50 px-3 py-2 rounded-lg text-sm">Teams</a>
+        <a href="/events" class="block text-leaf-100 hover:bg-leaf-700/50 px-3 py-2 rounded-lg text-sm">Events</a>
+        <a href="/rankings" class="block text-leaf-100 hover:bg-leaf-700/50 px-3 py-2 rounded-lg text-sm">Rankings</a>
+        <a href="/export/csv" class="block text-hive-200 px-3 py-2 text-sm">Export CSV</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="text-center text-leaf-200/60 text-sm py-8">
+    <p>BIOBUZZ Scout · Built for FTC 2026-2027 · Hosted on Render</p>
+  </footer>
+
+  <script>
+    document.getElementById('mobile-menu-btn')?.addEventListener('click', () => {
+      document.getElementById('mobile-menu').classList.toggle('hidden');
+    });
+  </script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>
